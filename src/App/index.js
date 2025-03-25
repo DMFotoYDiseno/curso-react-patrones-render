@@ -1,13 +1,95 @@
 import React from 'react';
-import { TodoProvider } from '../TodoContext';
-import { AppUI } from './AppUI';
-
+import { useTodos } from './useTodos';
+import { TodoHeader } from "../TodoHeader";
+import { TodoCounter } from '../TodoCounter';
+import { TodoSearch } from '../TodoSearch';
+/* import { TodoList } from '../TodoList';*/
+import { TodoItem } from '../TodoItem';
+import { TodosError } from '../TodosError';
+import { TodosLoading } from '../TodosLoading';
+import { EmptyTodos } from '../EmptyTodos';
+import { TodoForm } from '../TodoForm';
+import { CreateTodoButton } from '../CreateTodoButton';
+import { Modal } from '../Modal';
 
 function App() {
+  const {
+    error,
+    loading,
+    searchedTodos,
+    completeTodo,
+    deleteTodo,
+    openModal,
+    setOpenModal,
+    totalTodos,
+    completedTodos,
+    searchValue, 
+    setSearchValue,
+    addTodo,
+  } = useTodos();
+
+
   return (
-    <TodoProvider>
-      <AppUI />
-    </TodoProvider>
+    <React.Fragment>
+      <TodoHeader>
+        <TodoCounter  
+          TotalTodos={totalTodos}
+          CompletedTodos={completedTodos}
+        />
+        <TodoSearch
+          searchValue={searchValue}
+          setSearchValue={setSearchValue}
+        />
+      </TodoHeader>
+
+      <TodoList
+        error={error}
+        loading={loading}
+        searchedTodos={searchedTodos}
+        onError={() => <TodosError />}
+        onLoading={() => <TodosLoading />}
+        onEmptyTodos={() => <EmptyTodos />}
+        render={todo => (
+          <TodoItem
+            key={todo.text}
+            text={todo.text}
+            completed={todo.completed}
+            onComplete={() => completeTodo(todo.text)}
+            onDelete={()=> deleteTodo(todo.text)}
+          />
+        )}
+      />
+
+      {!!openModal && (
+        <Modal>
+          <TodoForm 
+            addTodo={addTodo}
+            setOpenModal={setOpenModal}
+          />
+        </Modal>
+      )}
+
+      <CreateTodoButton
+        setOpenModal={setOpenModal}
+      />
+    </React.Fragment>
+  );
+}
+
+function TodoList(props) {
+  return (
+    <section className="todoList-container">
+      {props.error && props.onError()}
+      {props.loading && props.onLoading()}
+
+      {(!props.loading && !props.searchedTodos?.length) && props.onEmptyTodos()}
+
+      {props.searchedTodos.map(props.render)}
+
+      <ul>
+        {props.children}
+      </ul>
+    </section> 
   );
 }
 
