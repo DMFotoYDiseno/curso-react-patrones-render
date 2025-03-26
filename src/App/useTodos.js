@@ -5,6 +5,7 @@ function useTodos() {
   const {
     item: todos,
     saveItem: saveTodos,
+    sincronizeItem: sincronizeTodos,
     loading,
     error,
   } = useLocalStorage('TODOS_V1', []);
@@ -38,7 +39,9 @@ function useTodos() {
   const completeTodo = (text) => {
     const todoIndex = todos.findIndex(todo => todo.text === text);
     const newTodos = [...todos];
-    newTodos[todoIndex].completed = true;
+    
+    /*newTodos[todoIndex].completed = true;*/
+    newTodos[todoIndex].completed=!newTodos[todoIndex].completed
     saveTodos(newTodos);
   };
 
@@ -62,6 +65,7 @@ function useTodos() {
     deleteTodo,
     openModal,
     setOpenModal,
+    sincronizeTodos,
   };
 }
 
