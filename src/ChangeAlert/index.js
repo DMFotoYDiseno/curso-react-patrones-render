@@ -5,7 +5,7 @@ import './ChangeAlert.css';
 
 /* function ChangeAlert({ show, toggleShow }) { */
 function ChangeAlert({ sincronize }) {
-  const { show, toggleShow } = useStorageListener(sincronize);
+  const { show, toggleShow } = useStorageListener({sincronize});
 
 if (show) {
     return (
